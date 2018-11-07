@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: internalgo
+  labels:
+    app: internalgo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: internalgo
+  template:
+    metadata:
+      labels:
+        app: internalgo
+    spec:
+      containers:
+      - name: internalgo
+        image: gcr.io/aldis-secret-project/internalgo:latest
+        ports:
+        - containerPort: 8081
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: internalgo
+spec:
+  selector:
+    app: internalgo
+  ports:
+  - protocol: TCP
+    port: 8081
+    targetPort: 8081
