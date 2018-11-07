@@ -59,7 +59,7 @@ data:
         ssl_certificate /etc/ssl/test.kataldi.com.crt;
         ssl_certificate_key /etc/ssl/test.kataldi.com.key;
 
-        location / {
+        location /go {
           proxy_pass http://smallgo.default.svc.cluster.local:8080;
         }
       }
