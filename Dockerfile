@@ -1,5 +1,5 @@
 FROM golang:alpine AS builder
-ADD ./ /go/src/smallgo/
+ADD ./main.go /go/src/smallgo/main.go
 
 RUN set -ex && \
     cd /go/src/smallgo && \
