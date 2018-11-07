@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: smallgo
-        image: gcr.io/brave-anagram-221806/smallgo:latest
+        image: gcr.io/aldis-secret-project/smallgo:latest
         ports:
         - containerPort: 8080
 
