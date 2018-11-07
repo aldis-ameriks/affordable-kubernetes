@@ -9,7 +9,11 @@ import (
 )
 
 func homePage(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Request received")
+	fmt.Fprintf(w, "Welcome to Kubernetes!")
+}
 
+func internalPage(w http.ResponseWriter, r *http.Request) {
 	var netClient = &http.Client{
 		Timeout: time.Second * 3,
 	}
@@ -24,11 +28,12 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	}
 	var parsedBody = string(body)
 	fmt.Println(parsedBody)
-	fmt.Println("Request received")
-	fmt.Fprintf(w, "Welcome to Kubernetes! %s", parsedBody)
+	fmt.Println("Internal request received")
+	fmt.Fprintf(w, "Welcome to page that calls an internal service!! %s", parsedBody)
 }
 
 func main() {
 	http.HandleFunc("/", homePage)
+	http.HandleFunc("/internal", internalPage)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
