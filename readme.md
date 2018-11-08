@@ -135,8 +135,10 @@ When removing/adding services, they gain new cluster ips. We're using internal d
 Installing HELM (the package manager for Kubernetes)
 
 https://docs.helm.sh/using_helm/#installing-helm
+```
 brew install kubernetes-helm
 helm init
 kubectl create serviceaccount --namespace kube-system tiller
 kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
 kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+```
