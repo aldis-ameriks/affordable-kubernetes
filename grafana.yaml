@@ -14,19 +14,30 @@ spec:
       labels:
         app: grafana
     spec:
+      securityContext:
+        fsGroup: 2000
+        runAsUser: 1000
+        runAsNonRoot: true
       containers:
       - name: grafana
         image: grafana/grafana
         ports:
         - containerPort: 3000
+        volumeMounts:
+        - name: "storage"
+          mountPath: "/var/lib/grafana"
         env:
         - name: GF_SERVER_ROOT_URL
           value: "/grafana"
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: grafana-storage
 
 ---
 
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
   name: grafana
 spec:
