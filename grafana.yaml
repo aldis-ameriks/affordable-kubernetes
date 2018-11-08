@@ -29,6 +29,8 @@ spec:
         env:
         - name: GF_SERVER_ROOT_URL
           value: "/grafana"
+#        - name: GF_INSTALL_PLUGINS
+#          value: grafana-kubernetes-app
       volumes:
       - name: storage
         persistentVolumeClaim:
