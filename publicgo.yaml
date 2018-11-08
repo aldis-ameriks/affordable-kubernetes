@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: publicgo
+  labels:
+    app: publicgo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: publicgo
+  template:
+    metadata:
+      labels:
+        app: publicgo
+    spec:
+      containers:
+      - name: publicgo
+        image: gcr.io/the-affordable-project/publicgo:latest
+        ports:
+        - containerPort: 8080
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: publicgo
+spec:
+  selector:
+    app: publicgo
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080

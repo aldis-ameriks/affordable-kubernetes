@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: internalgo
-        image: gcr.io/aldis-secret-project/internalgo:latest
+        image: gcr.io/the-affordable-project/internalgo:latest
         ports:
         - containerPort: 8081
 
