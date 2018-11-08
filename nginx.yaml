@@ -46,7 +46,7 @@ data:
     error_log /dev/stdout info;
 
     events {
-      worker_connections 10;
+      worker_connections 30;
     }
 
     http {
@@ -61,6 +61,11 @@ data:
 
         location /go/ {
           proxy_pass http://smallgo.default.svc.cluster.local:8080/;
+          proxy_redirect off;
+        }
+
+        location /grafana/ {
+          proxy_pass http://grafana.default.svc.cluster.local:3000/;
           proxy_redirect off;
         }
       }
