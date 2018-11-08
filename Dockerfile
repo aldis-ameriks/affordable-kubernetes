@@ -1,12 +1,12 @@
 FROM golang:alpine AS builder
-ADD ./main.go /go/src/smallgo/main.go
+ADD ./main.go /go/src/goapp/main.go
 
 RUN set -ex && \
-    cd /go/src/smallgo && \
+    cd /go/src/goapp && \
     CGO_ENABLED=0 go build -a -v && \
     ls && \
-    mv ./smallgo /usr/bin/smallgo
+    mv ./goapp /usr/bin/goapp
 
 FROM busybox
-COPY --from=builder /usr/bin/smallgo /usr/local/bin/smallgo
-ENTRYPOINT [ "smallgo" ]
+COPY --from=builder /usr/bin/goapp /usr/local/bin/goapp
+ENTRYPOINT [ "goapp" ]
