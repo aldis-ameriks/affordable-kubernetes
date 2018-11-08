@@ -112,6 +112,11 @@ Test that it works. Find the external IPs for your nodes: `kubectl get nodes -o 
 7. Get a domain and add `A` records that point to the 3 external ip addresses.
 
 If all worked well, now we should have fully functional Kubernetes cluster on GKE.
+> Ignore the Grafana entries, that was not part of this setup.
+
+![alt text](img/6_final_workloads.png)
+
+![alt text](img/7_final_services.png)
 
 
 #### Encountered issues
