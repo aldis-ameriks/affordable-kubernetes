@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes-cloudflare-sync
+  labels:
+    app: kubernetes-cloudflare-sync
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubernetes-cloudflare-sync
+  template:
+    metadata:
+      labels:
+        app: kubernetes-cloudflare-sync
+    spec:
+      serviceAccountName: kubernetes-cloudflare-sync
+      containers:
+      - name: kubernetes-cloudflare-sync
+        image: gcr.io/the-affordable-project/kubernetes-cloudflare-sync
+        args:
+        - --dns-name=tech.kataldi.com
+        env:
+        - name: CF_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cloudflare
+              key: api-key
+        - name: CF_API_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: cloudflare
+              key: email
