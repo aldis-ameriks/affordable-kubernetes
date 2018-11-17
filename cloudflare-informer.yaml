@@ -19,7 +19,7 @@ spec:
       - name: kubernetes-cloudflare-sync
         image: gcr.io/the-affordable-project/kubernetes-cloudflare-sync
         args:
-        - --dns-name=tech.kataldi.com
+        - --dns-name=cloud.kataldi.com
         env:
         - name: CF_API_KEY
           valueFrom:
