@@ -17,6 +17,7 @@ If for some odd reason someone is reading this, I apologize for the ungenerous e
 6. [Build 'n' deploy](#section-6)
 7. [Get a domain](#section-7)
 8. [Automate updating DNS](#section-8)
+9. [Prometheus & Grafana](#section-9)
 
 Starting off with clean GCP account.
 
@@ -74,7 +75,7 @@ gcloud init
 
 If a different project has already been configured previously, might have to fetch the cluster credentials.
 
-`gcloud container clusters get-credentials affordable-cluster-1`
+`gcloud container clusters get-credentials affordable-cluster-1 --project the-affordable-project`
 
 
 ### 4. Since we're not going to use GCE load balancers, we will need to open our nodes to the public network. Before we can do that, we need a firewall opening. Head to https://console.cloud.google.com/networking/firewalls/list and create a new firewall rule.<a name="section-4"></a>
@@ -127,30 +128,12 @@ If all worked well, now we should have fully functional Kubernetes cluster on GK
 
 ![alt text](img/7_final_services.png)
 
-### 8. Automate DNS updates<a name="section-8"></a>
+### 8. Automate DNS updates.<a name="section-8"></a>
 Preemtibles nodes live up to 24h after which they're destroyed and recreated. When that happens, they're assigned a new externalip. To avoid having to manually update `A` records everyday, there's a way to automate it. There's a great solution for that in the blog post I mentioned in the beginning that assumes using Cloudflare DNS services.
 
 
-### Encountered issues
-When removing/adding services, they gain new cluster ips. We're using internal dns to resolve the ip address of the cluster (e.g. `publicgo.default.svc.cluster.local` might resolve to `10.3.xxx.xxx`) when routing traffic from nginx. Nginx caches the dns, so when deleting/creating services nginx could start returning 504 Bad Gateway. The quickest solution I found was to recreate the nginx `kubectl delete -f nginx.yaml && kubectl apply -f nginx.yaml`. I don't enjoy doing that, but at least it's quite fast.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Misc
-Installing HELM (the package manager for Kubernetes)
-
+### 9. Set up monitoring and alerting capabilities using Prometheus, Alertmanager, PushGateway and Grafana.<a name="section-9"></a>
+Set up Tiller and Helm
 https://docs.helm.sh/using_helm/#installing-helm
 ```
 brew install kubernetes-helm
@@ -159,3 +142,57 @@ kubectl create serviceaccount --namespace kube-system tiller
 kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
 kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
 ```
+
+Install Prometheus, Alertmanager and PushGateway
+helm install --name prometheus --namespace monitoring stable/prometheus
+
+Verify that the setup is working.
+Run the following command and open localhost:9090 to boot up the Prometheus ui. 
+```
+  export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace default port-forward $POD_NAME 9090
+```
+
+Same for Alertmanager on :9093
+```
+  export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=alertmanager" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace default port-forward $POD_NAME 9093
+```
+
+And PushGateway on :9091
+```
+  export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=pushgateway" -o jsonpath="{.items[0].metadata.name}")
+    kubectl --namespace default port-forward $POD_NAME 9091
+```
+
+Install Grafana
+helm install --name grafana --namespace monitoring stable/grafana
+
+Get password:
+```
+kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+```
+
+Open tunnel
+```
+export POD_NAME=$(kubectl get pods --namespace default -l "app=grafana" -o jsonpath="{.items[0].metadata.name}")
+kubectl --namespace default port-forward $POD_NAME 3000
+```
+
+Open localhost:3000 and login using `admin` and password you got from secrets.
+Next configure Prometheus datasource using internal dns (change the name to however you named your prometheus stack)
+```
+historical-rottweiler-prometheus-server.default.svc.cluster.local
+```
+
+Find a fancy dashboard here https://grafana.com/dashboards?search=Kubernetes and import it to your Grafana instance using the dashboard id.
+
+
+
+### Encountered issues
+When removing/adding services, they gain new cluster ips. We're using internal dns to resolve the ip address of the cluster (e.g. `publicgo.default.svc.cluster.local` might resolve to `10.3.xxx.xxx`) when routing traffic from nginx. Nginx caches the dns, so when deleting/creating services nginx could start returning 504 Bad Gateway. The quickest solution I found was to recreate the nginx `kubectl delete -f nginx.yaml && kubectl apply -f nginx.yaml`. I don't enjoy doing that, but at least it's quite fast.
+
+
+
+### Todo
+Add NGINX Ingress controller and configure monitoring
