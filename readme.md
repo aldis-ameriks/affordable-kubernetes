@@ -144,7 +144,9 @@ kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"templat
 ```
 
 Install Prometheus, Alertmanager and PushGateway
+```
 helm install --name prometheus --namespace monitoring stable/prometheus
+```
 
 Verify that the setup is working.
 Run the following command and open localhost:9090 to boot up the Prometheus ui. 
@@ -166,7 +168,9 @@ And PushGateway on :9091
 ```
 
 Install Grafana
+```
 helm install --name grafana --namespace monitoring stable/grafana
+```
 
 Get password:
 ```
