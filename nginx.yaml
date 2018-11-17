@@ -64,11 +64,6 @@ data:
         ssl_certificate /etc/ssl/cloudflare.crt;
         ssl_certificate_key /etc/ssl/cloudflare.key;
 
-        location /go/ {
-          proxy_pass http://publicgo.default.svc.cluster.local:8080/;
-          proxy_redirect off;
-        }
-
         location /grafana/ {
           proxy_pass http://grafana.default.svc.cluster.local:3000/;
           proxy_redirect off;
