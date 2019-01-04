@@ -28,7 +28,7 @@ Starting off with clean GCP account.
 ### 2.  Head over to `Kubernetes Engine` -> `Clusters` and create a new Cluster with following parameters: <a name="section-2"></a>
     * Name: `affordable-cluster-1`
     * Location type: `Zonal`
-    * Zone: `europe-west1-b`
+    * Zone: `us-east1` (Always free nodes are available in following regions: us-west1, us-central1, us-east1. Source: https://cloud.google.com/compute/pricing)
     * Master version: at this time, I'm using the latest one, `1.11.2-gke.9`
     * Node pools
         * Number of nodes: `3`
