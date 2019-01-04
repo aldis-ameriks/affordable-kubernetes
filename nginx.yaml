@@ -76,28 +76,12 @@ data:
         listen 80;
         listen 443 ssl;
 
-        ssl_certificate /etc/ssl/cloudflare.crt;
-        ssl_certificate_key /etc/ssl/cloudflare.key;
+        ssl_certificate /etc/ssl/self-signed.crt;
+        ssl_certificate_key /etc/ssl/self-signed.key;
 
-        location /grafana/ {
-          proxy_pass http://grafana.default.svc.cluster.local:3000/;
+        location /go/ {
+          proxy_pass http://publicgo.default.svc.cluster.local:8080/;
           proxy_redirect off;
-        }
-
-        location /sensor/ {
-          proxy_pass http://data-backend.default.svc.cluster.local:8080/;
-          proxy_redirect off;
-        }
-
-        location /hangman/api/ {
-          proxy_pass http://hangman-backend.default.svc.cluster.local:4000/;
-          proxy_http_version 1.1;
-          proxy_set_header Upgrade $http_upgrade;
-          proxy_set_header Connection $connection_upgrade;
-        }
-
-        location /hangman/ {
-          proxy_pass http://hangman-client.default.svc.cluster.local:80/;
         }
       }
     }
